@@ -1,0 +1,34 @@
+{
+    "name": "petrisrf/move-files",
+    "description": "Easy file persistence for Eloquent models in Laravel 5.",
+    "type": "library",
+    "require": {
+        "illuminate/database": "^5.3",
+        "illuminate/support": "^5.3",
+        "illuminate/config": "^5.3",
+        "php": ">=5.6.4",
+        "orchestra/testbench": "^3.3",
+        "mockery/mockery": "^0.9.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Petrisrf\\MoveFiles\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Petrisrf\\MoveFiles\\Tests\\": "tests/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Petris Rodrigo Fernandes",
+            "email": "petrisrf@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
