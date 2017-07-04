@@ -33,9 +33,9 @@ class FileManager
         }
     }
 
-    public function removeModelFiles(Model $model)
+    public function removeModelFiles()
     {
-        $attributes = $model->getFileAttributes();
+        $attributes = $this->model->getFileAttributes();
 
         foreach ($attributes as $attribute) {
             $this->removeFileIfExists($attribute);

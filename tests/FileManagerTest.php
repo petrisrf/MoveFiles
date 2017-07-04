@@ -85,7 +85,6 @@ class FileManagerTest extends TestCase
         $this->model->shouldReceive('getFileAttributes')->once()->andReturn(['image']);
         $this->model->shouldReceive('setAttribute')->once()->with('image', 'administracao/uploaded_images/randomstr.png');
 
-//        $this->filesystem->shouldReceive('canMoveFile')->once()->andReturn(true);
         $this->filesystem->shouldReceive('exists')->with('path/to/old/image.png')->once()->andReturn(true);
         $this->filesystem->shouldReceive('delete')->with('path/to/old/image.png')->once();
 
@@ -98,7 +97,33 @@ class FileManagerTest extends TestCase
         $this->fileManager->persistModelFiles();
     }
 
-    protected function getUploadedFileSample()
+    /** @test */
+    public function should_remove_file_attributes()
+    {
+        $this->model->shouldReceive('getFileAttributes')
+                    ->once()
+                    ->andReturn(['image']);
+
+        $this->model->shouldReceive('getOriginal')
+                    ->once()
+                    ->with('image')
+                    ->andReturn('path/to/file');
+
+        $this->filesystem->shouldReceive('exists')
+                         ->once()
+                         ->with('path/to/file')
+                         ->andReturn(true);
+
+        $this->filesystem->shouldReceive('delete')
+                         ->with('path/to/file')
+                         ->once();
+
+        $this->fileManager->removeModelFiles();
+    }
+
+    /** @test */
+
+    public function getUploadedFileSample()
     {
         return new UploadedFile(
             'tests/image.png',
