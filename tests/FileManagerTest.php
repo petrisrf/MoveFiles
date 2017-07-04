@@ -2,7 +2,7 @@
 
 namespace Petrisrf\MoveFiles;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase;
 use Petrisrf\MoveFiles\Tests\Dummy;

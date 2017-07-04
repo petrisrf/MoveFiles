@@ -3,25 +3,28 @@
 namespace Petrisrf\MoveFiles;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class MoveFilesObserver
 {
-    protected $filemanager;
-
-    public function __construct(FileManager $filemanager)
-    {
-        $this->filemanager = $filemanager;
-    }
-
     public function saving(Model $model)
     {
-        $this->filemanager->setModel($model);
-        $this->filemanager->persistModelFiles($model);
+        $filemanager = $this->getFileManagerInstance($model);
+        $filemanager->persistModelFiles($model);
     }
 
     public function deleting(Model $model)
     {
-        $this->filemanager->setModel($model);
-        $this->filemanager->removeModelFiles($model);
+        $filemanager = $this->getFileManagerInstance($model);
+        $filemanager->removeModelFiles($model);
+    }
+
+    protected function getFileManagerInstance($model)
+    {
+        return new FileManager(
+            app()['files'],
+            $model,
+            new Str()
+        );
     }
 }

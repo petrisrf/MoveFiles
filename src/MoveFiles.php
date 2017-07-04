@@ -6,7 +6,7 @@ trait MoveFiles
 {
     static public function bootMoveFiles()
     {
-        static::observe(MoveFilesObserver::class);
+        static::observe(new MoveFilesObserver());
     }
 
     abstract public function getFileAttributes();

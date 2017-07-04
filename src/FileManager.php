@@ -2,7 +2,7 @@
 
 namespace Petrisrf\MoveFiles;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
