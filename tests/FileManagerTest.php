@@ -3,6 +3,7 @@
 namespace Petrisrf\MoveFiles;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase;
 use Petrisrf\MoveFiles\Tests\Dummy;
 use Mockery as m;
@@ -25,7 +26,8 @@ class FileManagerTest extends TestCase
 
         $this->fileManager = new FileManager(
             $this->filesystem,
-            $this->model
+            $this->model,
+            new Str()
         );
     }
 
@@ -38,7 +40,7 @@ class FileManagerTest extends TestCase
         $dummy      = new Dummy(['image' => $attr]);
         $filesystem = m::mock(Filesystem::class);
 
-        $fileManager = new FileManager($filesystem, $dummy);
+        $fileManager = new FileManager($filesystem, $dummy, new Str());
 
         $this->assertEquals($result, $fileManager->canMoveFile('image'));
     }
@@ -72,17 +74,26 @@ class FileManagerTest extends TestCase
             true
         ]);
 
-        $image->shouldReceive('move')->once();
+        $string = m::mock(Str::class);
 
-        $this->model->shouldReceive('getAttribute')->with('image')->once()->andReturn($image);
+        $string->shouldReceive("random")->with(10)->once()->andReturn('randomstr');
+        $image->shouldReceive('move')->with('administracao/uploaded_images/', 'randomstr.png')->once();
+
+        $this->model->shouldReceive('getAttribute')->with('image')->times(3)->andReturn($image);
         $this->model->shouldReceive('getOriginal')->with('image')->once()->andReturn('path/to/old/image.png');
         $this->model->shouldReceive('getUploadFolder')->once()->andReturn('administracao/uploaded_images/');
         $this->model->shouldReceive('getFileAttributes')->once()->andReturn(['image']);
-        $this->model->shouldReceive('setAttribute')->once()->with('image', 'teste');
+        $this->model->shouldReceive('setAttribute')->once()->with('image', 'administracao/uploaded_images/randomstr.png');
 
-        $this->filesystem->shouldReceive('canMoveFile')->once()->andReturn(true);
+//        $this->filesystem->shouldReceive('canMoveFile')->once()->andReturn(true);
         $this->filesystem->shouldReceive('exists')->with('path/to/old/image.png')->once()->andReturn(true);
         $this->filesystem->shouldReceive('delete')->with('path/to/old/image.png')->once();
+
+        $this->fileManager = new FileManager(
+            $this->filesystem,
+            $this->model,
+            $string
+        );
 
         $this->fileManager->persistModelFiles();
     }

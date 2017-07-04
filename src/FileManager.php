@@ -4,6 +4,7 @@ namespace Petrisrf\MoveFiles;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class FileManager
 {
@@ -11,12 +12,16 @@ class FileManager
 
     protected $model;
 
+    protected $string;
+
     public function __construct(
         Filesystem $filesystem,
-        Model $model
+        Model $model,
+        Str $string
     ) {
         $this->filesystem = $filesystem;
         $this->model      = $model;
+        $this->string     = $string;
     }
 
     public function persistModelFiles()
@@ -65,12 +70,14 @@ class FileManager
 
     private function moveNewFile($field)
     {
+        $uploadFolder = $this->model->getUploadFolder();
+
         $ext      = $this->model->getAttribute($field)->guessExtension();
-        $filename = str_random(10).".{$ext}";
+        $filename = $this->string->random(10).".{$ext}";
 
-        $filepath = "{$this->model->getUploadFolder()}{$filename}";
+        $filepath = "{$uploadFolder}{$filename}";
 
-        $this->model->$field->move($this->model->getUploadFolder(), $filename);
+        $this->model->$field->move($uploadFolder, $filename);
         $this->model->$field = $filepath;
     }
 }
