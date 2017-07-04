@@ -8,7 +8,7 @@ class MoveFilesObserver
 {
     protected $filemanager;
 
-    public function __construct($filemanager)
+    public function __construct(FileManager $filemanager)
     {
         $this->filemanager = $filemanager;
     }
