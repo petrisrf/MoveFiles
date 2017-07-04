@@ -8,4 +8,11 @@ trait MoveFiles
     {
         static::observe(MoveFilesObserver::class);
     }
+
+    abstract public function getFileAttributes();
+
+    public function getUploadFolder()
+    {
+        return 'administracao/uploaded_files/';
+    }
 }

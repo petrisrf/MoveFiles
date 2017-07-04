@@ -9,14 +9,19 @@ class FileManager
 {
     protected $filesystem;
 
-    public function __construct(Filesystem $filesystem)
-    {
+    protected $model;
+
+    public function __construct(
+        Filesystem $filesystem,
+        Model $model
+    ) {
         $this->filesystem = $filesystem;
+        $this->model      = $model;
     }
 
-    public function persistModelFiles(Model $model)
+    public function persistModelFiles()
     {
-        $attributes = $model->getStorableFileFields();
+        $attributes = $this->model->getFileAttributes();
 
         foreach ($attributes as $attribute) {
             $this->persistFileIfNecessary($attribute);
@@ -25,7 +30,7 @@ class FileManager
 
     public function removeModelFiles(Model $model)
     {
-        $attributes = $model->getStorableFileFields();
+        $attributes = $model->getFileAttributes();
 
         foreach ($attributes as $attribute) {
             $this->removeFileIfExists($attribute);
@@ -34,35 +39,38 @@ class FileManager
 
     private function persistFileIfNecessary($field)
     {
-        if (!$this->hasFileToMove($field)) {
-            $this->setAttribute($field, $this->getOriginal($field));
+        if (!$this->canMoveFile($field)) {
+            $this->model->setAttribute($field, $this->getOriginal($field));
         } else {
-            $this->removeOldFileIfExists($field);
+            $this->removeFileIfExists($field);
             $this->moveNewFile($field);
         }
     }
 
-    private function hasFileToMove($field)
+    public function canMoveFile($field)
     {
-        return !is_string($this->getAttribute($field)) &&
-            $this->getAttribute($field) != null;
+        $attribute = $this->model->getAttribute($field);
+
+        return is_string($attribute) === false && $attribute != null;
     }
 
-    private function removeFileIfExists($field)
+    public function removeFileIfExists($field)
     {
-        if (File::exists($this->getOriginal($field))) {
-            File::delete($this->getOriginal($field));
+        $modelAttr = $this->model->getOriginal($field);
+
+        if ($this->filesystem->exists($modelAttr)) {
+            $this->filesystem->delete($modelAttr);
         }
     }
 
     private function moveNewFile($field)
     {
-        $ext      = $this->getAttribute($field)->guessExtension();
+        $ext      = $this->model->getAttribute($field)->guessExtension();
         $filename = str_random(10).".{$ext}";
 
-        $filepath = "{$this->folder}{$filename}";
+        $filepath = "{$this->model->getUploadFolder()}{$filename}";
 
-        $this->$field->move($this->folder, $filename);
-        $this->$field = $filepath;
+        $this->model->$field->move($this->model->getUploadFolder(), $filename);
+        $this->model->$field = $filepath;
     }
 }
