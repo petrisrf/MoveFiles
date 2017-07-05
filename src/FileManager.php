@@ -45,7 +45,7 @@ class FileManager
     private function persistFileIfNecessary($field)
     {
         if (!$this->canMoveFile($field)) {
-            $this->model->setAttribute($field, $this->getOriginal($field));
+            $this->model->setAttribute($field, $this->model->getOriginal($field));
         } else {
             $this->removeFileIfExists($field);
             $this->moveNewFile($field);
