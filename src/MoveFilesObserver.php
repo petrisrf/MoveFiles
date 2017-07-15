@@ -10,13 +10,17 @@ class MoveFilesObserver
     public function saving(Model $model)
     {
         $filemanager = $this->getFileManagerInstance($model);
-        $filemanager->persistModelFiles($model);
+		$filemanager->persistModelFiles($model);
+
+		return true;
     }
 
     public function deleting(Model $model)
     {
         $filemanager = $this->getFileManagerInstance($model);
-        $filemanager->removeModelFiles($model);
+		$filemanager->removeModelFiles($model);
+
+		return true;
     }
 
     protected function getFileManagerInstance($model)
